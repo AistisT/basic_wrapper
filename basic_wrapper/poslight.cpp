@@ -136,7 +136,7 @@ void display()
 	square->DisplaySquare();
 
 	model = glm::translate(model, glm::vec3(x + 0.5, y, z));
-	model = glm::scale(model, glm::vec3(scale, scale, scale));//scale equally in all axis
+	model = glm::scale(model, glm::vec3(scale-.5, scale+.5, scale-.5));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis

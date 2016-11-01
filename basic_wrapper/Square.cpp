@@ -16,10 +16,7 @@ also includes the OpenGL extension initialisation*/
 #include "Square.h"
 
 
-
-
 	void Square::CreateSquare(){
-		GLuint triangles = 36;
 		/* Define vertices for a cube in 12 triangles */
 		GLfloat vertexPositions[] =
 		{
@@ -70,9 +67,6 @@ also includes the OpenGL extension initialisation*/
 			0.25f, 0.5f, 0.25f,
 			-0.25f, 0.5f, 0.25f,
 			-0.25f, 0.5f, -0.25f,
-
-
-
 
 		};
 
@@ -136,7 +130,4 @@ also includes the OpenGL extension initialisation*/
 		glEnableVertexAttribArray(2);
 		glBindBuffer(GL_ARRAY_BUFFER, normalsBufferObject);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
-	
 	}

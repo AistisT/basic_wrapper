@@ -18,104 +18,71 @@ also includes the OpenGL extension initialisation*/
 
 
 
-
 	void Square::CreateSquare(){
+		GLuint triangles = 36;
 		/* Define vertices for a cube in 12 triangles */
 		GLfloat vertexPositions[] =
 		{
-			-0.25f, 0.25f, -0.25f,
-			-0.25f, -0.25f, -0.25f,
-			0.25f, -0.25f, -0.25f,
+			-0.25f, 0.50f, -0.25f,
+			-0.25f, -0.50f, -0.25f,
+			0.25f, -0.50f, -0.25f,
 
-			0.25f, -0.25f, -0.25f,
-			0.25f, 0.25f, -0.25f,
-			-0.25f, 0.25f, -0.25f,
+			0.25f, -0.50f, -0.25f,
+			0.25f, 0.50f, -0.25f,
+			-0.25f, 0.50f, -0.25f,
 
-			0.25f, -0.25f, -0.25f,
-			0.25f, -0.25f, 0.25f,
-			0.25f, 0.25f, -0.25f,
+			0.25f, -0.50f, -0.25f,
+			0.25f, -0.50f, 0.25f,
+			0.25f, 0.50f, -0.25f,
 
-			0.25f, -0.25f, 0.25f,
-			0.25f, 0.25f, 0.25f,
-			0.25f, 0.25f, -0.25f,
+			0.25f, -0.50f, 0.25f,
+			0.25f, 0.50f, 0.25f,
+			0.25f, 0.50f, -0.25f,
 
-			0.25f, -0.25f, 0.25f,
-			-0.25f, -0.25f, 0.25f,
-			0.25f, 0.25f, 0.25f,
+			0.25f, -0.50f, 0.25f,
+			-0.25f, -0.50f, 0.25f,
+			0.25f, 0.50f, 0.25f,
 
-			-0.25f, -0.25f, 0.25f,
-			-0.25f, 0.25f, 0.25f,
-			0.25f, 0.25f, 0.25f,
+			-0.25f, -0.50f, 0.25f,
+			-0.25f, 0.50f, 0.25f,
+			0.25f, 0.50f, 0.25f,
 
-			-0.25f, -0.25f, 0.25f,
-			-0.25f, -0.25f, -0.25f,
-			-0.25f, 0.25f, 0.25f,
+			-0.25f, -0.5f, 0.25f,
+			-0.25f, -0.5f, -0.25f,
+			-0.25f, 0.5f, 0.25f,
 
-			-0.25f, -0.25f, -0.25f,
-			-0.25f, 0.25f, -0.25f,
-			-0.25f, 0.25f, 0.25f,
+			-0.25f, -0.5f, -0.25f,
+			-0.25f, 0.5f, -0.25f,
+			-0.25f, 0.5f, 0.25f,
 
-			-0.25f, -0.25f, 0.25f,
-			0.25f, -0.25f, 0.25f,
-			0.25f, -0.25f, -0.25f,
+			-0.25f, -0.5f, 0.25f,
+			0.25f, -0.5f, 0.25f,
+			0.25f, -0.5f, -0.25f,
 
-			0.25f, -0.25f, -0.25f,
-			-0.25f, -0.25f, -0.25f,
-			-0.25f, -0.25f, 0.25f,
+			0.25f, -0.5f, -0.25f,
+			-0.25f, -0.5f, -0.25f,
+			-0.25f, -0.5f, 0.25f,
 
-			-0.25f, 0.25f, -0.25f,
-			0.25f, 0.25f, -0.25f,
-			0.25f, 0.25f, 0.25f,
+			-0.25f, 0.5f, -0.25f,
+			0.25f, 0.5f, -0.25f,
+			0.25f, 0.5f, 0.25f,
 
-			0.25f, 0.25f, 0.25f,
-			-0.25f, 0.25f, 0.25f,
-			-0.25f, 0.25f, -0.25f,
+			0.25f, 0.5f, 0.25f,
+			-0.25f, 0.5f, 0.25f,
+			-0.25f, 0.5f, -0.25f,
+
+
+
+
 		};
 
 		/* Manually specified colours for our cube */
-		float vertexColours[] = {
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f,
-
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 1.0f, 0.0f, 1.0f,
-
-			1.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 1.0f,
-			1.0f, 1.0f, 0.0f, 1.0f,
-
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-
-			1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 1.0f, 1.0f,
-
-			0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 1.0f, 1.0f, 1.0f,
-		};
+		
+		float vertexColours[sizeof(vertexPositions)];
+		for (int i = 0; i < sizeof(vertexPositions); i++)
+		{
+			vertexColours[i] = 1;
+		}
 
 		/* Manually specified normals for our cube */
 		GLfloat normals[] =
@@ -131,7 +98,7 @@ also includes the OpenGL extension initialisation*/
 			0, -1.f, 0, 0, -1.f, 0, 0, -1.f, 0,
 			0, -1.f, 0, 0, -1.f, 0, 0, -1.f, 0,
 			0, 1.f, 0, 0, 1.f, 0, 0, 1.f, 0,
-			0, 1.f, 0, 0, 1.f, 0, 0, 1.f, 0,
+			0, 1.f, 0, 0, 1.f, 0, 0, 1.f, 0
 		};
 
 		/* Create the vertex buffer for the cube */
@@ -154,10 +121,7 @@ also includes the OpenGL extension initialisation*/
 	}
 
 	void Square::DisplaySquare(){
-		x = 0.05f;
-		y = 0;
-		z = 0;
-		angle_x = angle_y = angle_z = 0;
+
 		/* Bind cube vertices. Note that this is in attribute index 0 */
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glEnableVertexAttribArray(0);
@@ -173,12 +137,6 @@ also includes the OpenGL extension initialisation*/
 		glBindBuffer(GL_ARRAY_BUFFER, normalsBufferObject);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-		// Define the model transformations for the cube
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(x + 0.5, y, z));
-		model = glm::scale(model, glm::vec3(scale, scale, scale));//scale equally in all axis
-		model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
-		model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
-		model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
 
+	
 	}

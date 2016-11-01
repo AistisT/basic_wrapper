@@ -17,7 +17,7 @@ if you prefer */
 #include "wrapper_glfw.h"
 #include <iostream>
 
-/* Include GLM core and matrix extensions*/
+   /* Include GLM core and matrix extensions*/
 #include <glm/glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
@@ -52,7 +52,7 @@ GLuint colourmodeID, emitmodeID;
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
 GLuint numspherevertices;
 
-Square *square;
+Square* square;
 
 /* Function prototypes */
 /* Note that a better design would be to make a sphere class. I've suggested that as one of the
@@ -130,9 +130,18 @@ void display()
 
 	/* Make the compiled shader program current */
 	glUseProgram(program);
-
-	square->DisplaySquare();
 	glm::mat4 model = glm::mat4(1.0f);
+
+	// Define the model transformations for the cube
+	square->DisplaySquare();
+
+	model = glm::translate(model, glm::vec3(x + 0.5, y, z));
+	model = glm::scale(model, glm::vec3(scale, scale, scale));//scale equally in all axis
+	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	
+
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(30.0f, aspect_ratio, 0.1f, 100.0f);
 
@@ -141,7 +150,7 @@ void display()
 		glm::vec3(0, 0, 4), // Camera is at (0,0,4), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
+	);
 
 	// Apply rotations to the view position
 	View = glm::rotate(View, -vx, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
@@ -164,13 +173,13 @@ void display()
 	glUniform4fv(lightposID, 1, glm::value_ptr(lightpos));
 
 	/* Draw our cube*/
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawArrays(GL_TRIANGLES, 0, 72);
 
 	/* Define the model transformations for our sphere */
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-x-0.5, 0, 0));
-	model = glm::scale(model, glm::vec3(scale/3.f, scale/3.f, scale/3.f));//scale equally in all axis
+	model = glm::translate(model, glm::vec3(-x - 0.5, 0, 0));
+	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
 	model = glm::rotate(model, -angle_y, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
 	model = glm::rotate(model, -angle_z, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
@@ -220,32 +229,21 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 
-	if (key == 'Q') angle_inc_x -= 0.05f;
-	if (key == 'W') angle_inc_x += 0.05f;
-	if (key == 'E') angle_inc_y -= 0.05f;
-	if (key == 'R') angle_inc_y += 0.05f;
-	if (key == 'T') angle_inc_z -= 0.05f;
-	if (key == 'Y') angle_inc_z += 0.05f;
-	if (key == 'A') scale -= 0.02f;
-	if (key == 'S') scale += 0.02f;
-	if (key == 'Z') x -= 0.05f;
-	if (key == 'X') x += 0.05f;
-	if (key == 'C') y -= 0.05f;
-	if (key == 'V') y += 0.05f;
-	if (key == 'B') z -= 0.05f;
-	if (key == 'N') z += 0.05f;
-	if (key == '1') light_x -= 0.05f;
-	if (key == '2') light_x += 0.05f;
-	if (key == '3') light_y -= 0.05f;
-	if (key == '4') light_y += 0.05f;
-	if (key == '5') light_z -= 0.05f;
-	if (key == '6') light_z += 0.05f;
-	if (key == '7') vx -= 1.f;
-	if (key == '8') vx += 1.f;
-	if (key == '9') vy -= 1.f;
-	if (key == '0') vy += 1.f;
-	if (key == 'O') vz -= 1.f;
-	if (key == 'P') vz += 1.f;
+
+	if (key == '1') scale -= 0.02f;
+	if (key == '2') scale += 0.02f;
+	if (key == '3') light_x -= 0.05f;
+	if (key == '4') light_x += 0.05f;
+	if (key == '5') light_y -= 0.05f;
+	if (key == '6') light_y += 0.05f;
+	if (key == '7') light_z -= 0.05f;
+	if (key == '8') light_z += 0.05f;
+	if (key == 'S') vx -= 1.f;
+	if (key == 'W') vx += 1.f;
+	if (key == 'D') vy -= 1.f;
+	if (key == 'A') vy += 1.f;
+	if (key == 'Q') vz -= 1.f;
+	if (key == 'E') vz += 1.f;
 
 	if (key == 'M' && action != GLFW_PRESS)
 	{
@@ -256,7 +254,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	/* Cycle between drawing vertices, mesh and filled polygons */
 	if (key == 'N' && action != GLFW_PRESS)
 	{
-		drawmode ++;
+		drawmode++;
 		if (drawmode > 2) drawmode = 0;
 	}
 

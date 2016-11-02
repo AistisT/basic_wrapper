@@ -88,7 +88,7 @@ void init(GLWrapper *glw)
 	glBindVertexArray(vao);
 
 	square = new Square();
-	square->CreateSquare();
+	square->DefineSquare();
 
 	/* create the sphere object */
 	numspherevertices = makeSphereVBO(numlats, numlongs);
@@ -130,12 +130,7 @@ void display()
 
 	/* Make the compiled shader program current */
 	glUseProgram(program);
-	glm::mat4 model = glm::mat4(1.0f);
-
-
 	
-
-		
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(30.0f, aspect_ratio, 0.1f, 100.0f);
@@ -155,33 +150,23 @@ void display()
 	// Define the light position and transform by the view matrix
 	glm::vec4 lightpos = View *  glm::vec4(light_x, light_y, light_z, 1.0);
 
-	square->DisplaySquare(model, View, modelID,normalmatrixID,0.5f,0,0);
-
-	// Send our uniforms variables to the currently bound shader,
-
 	glUniform1ui(colourmodeID, colourmode);
 	glUniform1ui(emitmodeID, emitmode);
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &View[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &Projection[0][0]);
 	glUniform4fv(lightposID, 1, glm::value_ptr(lightpos));
 
-	// Define the normal matrix
-	glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
+	square->Init(modelID, normalmatrixID);
+	square->DisplaySquare(View,0.5f, 0, 0, 0.5, 1,.5 ,50 ,50 ,50);
+	square->DisplaySquare(View, 0.8f, 0, 0, 0.5, 1, .5, 0, 0, 0);
+	square->DisplaySquare(View, 0.1f, 0, 0, 0.5,1,0.5, 0,0,0);
 
-	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
-	//square->DisplaySquare(model, View, modelID, normalmatrixID, 0.7f, 0, 0);
 
-	// Define the normal matrix
-	normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
 
-	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
-	/* Draw our cube*/
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+
 	/* Define the model transformations for our sphere */
 
-	model = glm::mat4(1.0f);
+	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-x - 0.5, 0, 0));
 	model = glm::scale(model, glm::vec3(scale / 3.f, scale / 3.f, scale / 3.f));//scale equally in all axis
 	model = glm::rotate(model, -angle_x, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
@@ -190,7 +175,7 @@ void display()
 	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 
 	/* Draw our sphere */
-	 normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
+	glm::mat3 normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
 	glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
 	drawSphere();
 

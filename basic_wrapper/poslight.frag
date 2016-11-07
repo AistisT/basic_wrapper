@@ -29,7 +29,7 @@ void main()
 	vec3 specular = pow(max(dot(R, V), 0.0), shininess) * specular_albedo;
 
 		// Calculate the attenuation factor;
-	float attenuation_k = 1.0;
+	float attenuation_k = .3;
     float attenuation = 1.0 / (1.0 + attenuation_k * pow(distanceToLight, 2));
 
 

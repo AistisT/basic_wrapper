@@ -40,11 +40,9 @@ void main()
 	if (emitmode == 1) 
 		emissive = vec3(1.0, 1.0, 0.8); 
 	
-	// Switch the vertex colour based on the colourmode
-	if (colourmode == 1)
+
 		diffuse_albedo = colour;
-	else
-		diffuse_albedo = vec4(1.0, 0, 0, 1.0);
+
 
 	gl_Position = (projection * view * model) * position_h;
 }

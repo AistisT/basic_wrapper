@@ -1,5 +1,3 @@
-// Veretx shader: When completed should implement
-// per vertex lighting
 
 // Specify minimum OpenGL version
 #version 400
@@ -14,15 +12,12 @@ out vec3 N, L, emissive;
 out vec4 P;
 out vec4 diffuse_albedo; // This is the vertex colour, used to handle the colourmode change
 
-
 // These are the uniforms that are defined in the application
 uniform mat4 model, view, projection;
 uniform mat3 normalmatrix;
 uniform uint colourmode;
 uniform vec4 lightpos;
 uniform uint emitmode;
-
-
 
 void main()
 {
@@ -40,9 +35,7 @@ void main()
 	if (emitmode == 1) 
 		emissive = vec3(1.0, 1.0, 0.8); 
 	
-
 		diffuse_albedo = colour;
-
 
 	gl_Position = (projection * view * model) * position_h;
 }

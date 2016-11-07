@@ -143,7 +143,6 @@ void Ball::makeUnitSphere(GLfloat *pVertices, GLuint numlats, GLuint numlongs)
 }
 
 
-
 /* Draws the sphere form the previously defined vertex and index buffers */
 void Ball::drawSphere(glm::mat4& View, GLfloat x, GLfloat y, GLfloat z, GLfloat scale, GLfloat arc, bool light)
 {
@@ -151,6 +150,7 @@ void Ball::drawSphere(glm::mat4& View, GLfloat x, GLfloat y, GLfloat z, GLfloat 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(x, y, z));
 	model = glm::rotate(model, arc, glm::vec3(0, 0, 1));
+	// if not light position, no need to translate light second time
 	if (!light)
 	model = glm::translate(model, glm::vec3(0, -.98, 0));
 	model = glm::scale(model, glm::vec3(scale, scale, scale));//scale equally in all axis

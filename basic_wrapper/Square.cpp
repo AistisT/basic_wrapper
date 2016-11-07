@@ -12,9 +12,7 @@ also includes the OpenGL extension initialisation*/
 #include <glm/glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
-
 #include "Square.h"
-
 
 	void Square::DefineSquare(){
 		/* Define vertices for a cube in 12 triangles */
@@ -131,7 +129,6 @@ also includes the OpenGL extension initialisation*/
 		// Define the normal matrix
 		normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
 
-
 		/* Bind cube vertices. Note that this is in attribute index 0 */
 		glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 		glEnableVertexAttribArray(0);
@@ -150,5 +147,4 @@ also includes the OpenGL extension initialisation*/
 		glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
 		glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
 	}

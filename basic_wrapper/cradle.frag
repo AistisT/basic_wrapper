@@ -1,7 +1,5 @@
 // Minimal fragment shader
-
 #version 400
-
 
 in vec3 N, L, emissive;
 in vec4 P;
@@ -34,10 +32,6 @@ void main()
 
 
 	vec3 ambient = diffuse_albedo.xyz *0.2;
-
-	// Calculate the output colour, includung attenuation on the diffuse and specular components
-	// Note that you may want to exclude the ambient form the attenuation factor so objects
-	// are always visible, or include a global ambient
 
 	outputColor =vec4(attenuation*(ambient + diffuse + specular) + emissive + global_ambient, 1.0) ;
 }

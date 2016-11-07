@@ -1,4 +1,3 @@
-
 /* Link to static libraries */
 #pragma comment(lib, "glfw3.lib")
 #pragma comment(lib, "glloadD.lib")
@@ -15,23 +14,25 @@
 #include "Ball.h"
 #include "Cylinder.h"
 
-
 GLuint program;		/* Identifier for the shader prgoram */
 GLuint vao;			/* Vertex array (Containor) object. This is the index of the VAO that will be the container foro ur buffer objects */
 
-GLuint colourmode;	/* Index of a uniform to switch the colour mode in the vertex shader  I've included this to show you how to pass in an unsigned integer into your vertex shader. */
 GLuint emitmode;
 
 /* Position and view globals */
 GLfloat  vx, vy, vz;
 
+// frame variables
+const GLfloat fLLenght = 1.5f, sWidth = 0.3f, fSLenght = 0.85f, fHeight = 1.2f, fWidth = 1.f, pDistance = 0.675f, swingS = 0.135;
+// ball varaibles
 bool third = false;
 const GLuint bNr = 5, pair = 2;
-const GLfloat fLLenght = 1.5f, sWidth = 0.3f, fSLenght = 0.85f, fHeight = 1.2f, fWidth = 1.f, pDistance = 0.675f, swingS = 0.135;
 const GLfloat bSpeed = 0.12f, bXR = 0.014;
 GLfloat bWithd, bY[bNr], bX[bNr], bArc[bNr];
-GLuint bDir[5];
+GLuint bDir[5], swingMode, swing;
+//string variables
 GLfloat cY[bNr][pair], cX[bNr][pair], cZ[bNr][pair], cRY[bNr][pair], cRX[bNr][pair], cRZ[bNr][pair];
+// light variables
 GLfloat light_x, light_y, light_z;
 
 /* Uniforms*/
@@ -40,7 +41,7 @@ GLuint colourmodeID, emitmodeID;
 
 GLfloat aspect_ratio;		/* Aspect ratio of the window defined in the reshape callback*/
 
-GLuint swingMode, swing;
+
 Square* square;
 Ball ball[bNr];
 Cylinder cylinder[bNr][pair];
@@ -55,14 +56,9 @@ Use it for all your initialisation stuff
 void init(GLWrapper *glw)
 {
 	/* Set the object transformation controls to their initial values */
-
 	vx = 20; vy = 0, vz = 0.f;
-
-	aspect_ratio = 1.3333f;
-	colourmode = 0; emitmode = 0;
-
+	aspect_ratio = 1.3333f; emitmode = 0;
 	bWithd = .225f / 2;
-
 	light_z = -fWidth / 2;
 	// Generate index (name) for one vertex array object
 	glGenVertexArrays(1, &vao);
@@ -73,11 +69,10 @@ void init(GLWrapper *glw)
 	square = new Square();
 	square->DefineSquare();
 
-
 	/* Load and build the vertex and fragment shaders */
 	try
 	{
-		program = glw->LoadShader("poslight.vert", "poslight.frag");
+		program = glw->LoadShader("cradle.vert", "cradle.frag");
 	}
 	catch (std::exception &e)
 	{
@@ -88,13 +83,13 @@ void init(GLWrapper *glw)
 
 	/* Define uniforms to send to vertex shader */
 	modelID = glGetUniformLocation(program, "model");
-	colourmodeID = glGetUniformLocation(program, "colourmode");
 	emitmodeID = glGetUniformLocation(program, "emitmode");
 	viewID = glGetUniformLocation(program, "view");
 	projectionID = glGetUniformLocation(program, "projection");
 	lightposID = glGetUniformLocation(program, "lightpos");
 	normalmatrixID = glGetUniformLocation(program, "normalmatrix");
 
+	// balls/strings starting values
 	GLfloat distance = -0.675f + bWithd * 2;
 	for (int i = 0; i < bNr; i++) {
 		ball[i] = Ball();
@@ -156,7 +151,6 @@ void display()
 	// Define the light position and transform by the view matrix
 	glm::vec4 lightpos = View *  glm::vec4(light_x, light_y, light_z, 1.0);
 
-	glUniform1ui(colourmodeID, colourmode);
 	glUniform1ui(emitmodeID, emitmode);
 	glUniformMatrix4fv(viewID, 1, GL_FALSE, &View[0][0]);
 	glUniformMatrix4fv(projectionID, 1, GL_FALSE, &Projection[0][0]);
@@ -165,7 +159,7 @@ void display()
 	square->Init(modelID, normalmatrixID);
 
 	//view, x, y ,z positions, x, y,z, scale, x,y,z, rotation
-	// frame
+	// frame construction
 	square->DisplaySquare(View, 0, .4, 0, sWidth, fLLenght, sWidth, 0, 0, 90);
 	square->DisplaySquare(View, 0, .4, -fWidth, sWidth, fLLenght, sWidth, 0, 0, 90);
 
@@ -178,7 +172,7 @@ void display()
 	square->DisplaySquare(View, pDistance, -.795, -fWidth / 2, sWidth, fSLenght, sWidth, 90, 0, 0);
 	square->DisplaySquare(View, -pDistance, -.795, -fWidth / 2, sWidth, fSLenght, sWidth, 90, 0, 0);
 
-
+	// balls and strings
 	for (int i = 0; i < bNr; i++) {
 		ball[i].drawSphere(View, bX[i], bY[i], -fWidth / 2, bWithd, bArc[i], false);
 		for (int j = 0; j < pair; j++) {
@@ -197,39 +191,31 @@ void display()
 	MoveBalls();
 }
 
+// Ball movement selector
 void MoveBalls() {
 	for (int i = 1; i <= swingMode; i++) {
-		if (bDir[i-1] == 1 &&  !third) {
-			Swing1(i - 1, -swingS,  -44.955, 2, i - 1, bXR, -bXR);
+		if (bDir[i - 1] == 1 && !third) {
+			Swing1(i - 1, -swingS, -44.955, 2, i - 1, bXR, -bXR);
 		}
-		else if  (bDir[i-1] == 2 ) {
-			Swing2(i - 1, swingS,  0, 1, bNr - i, -bXR, bXR);
+		else if (bDir[i - 1] == 2) {
+			Swing2(i - 1, swingS, 0, 1, bNr - i, -bXR, bXR);
 			third = true;
 		}
-		else if (bDir[bNr-i] == 1 ) {
-			Swing2(bNr - i, swingS,  44.955, 2, bNr - i, bXR, -bXR);
+		else if (bDir[bNr - i] == 1) {
+			Swing2(bNr - i, swingS, 44.955, 2, bNr - i, bXR, -bXR);
 		}
-		else if (bDir[bNr-i] == 2 ) {
-			Swing1(bNr - i, -swingS,  0, 1, i-1, -bXR, bXR);
+		else if (bDir[bNr - i] == 2) {
+			Swing1(bNr - i, -swingS, 0, 1, i - 1, -bXR, bXR);
 			third = false;
 		}
 	}
 
 }
 
+// left swing movement
 void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2) {
-
-	bArc[ball] += s;
-
-	for (int j = 0; j < pair; j++) {
-		cRZ[ball][j] += -bSpeed;
-		if (cZ[ball][j] == 0)
-			cRX[ball][j] += bRot;
-		else
-			cRX[ball][j] += bRot2;
-	}
 	if (bArc[ball] <= d) {
-		//bArc[ball] = d;
+		//bY[ball] = d;
 		bDir[ball] = 0;
 		bDir[nBall] = t;
 		if (swing == 0 && ball != nBall) {
@@ -237,17 +223,19 @@ void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat b
 			bDir[nBall] = 0;
 		}
 	}
-}
-void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2) {
-	bArc[ball] += s;
-
-	for (int j = 0; j < pair; j++) {
-		cRZ[ball][j] += bSpeed;
-		if (cZ[ball][j] == 0)
-			cRX[ball][j] += bRot;
-		else
-			cRX[ball][j] += bRot2;
+	else {
+		bArc[ball] += s;
+		for (int j = 0; j < pair; j++) {
+			cRZ[ball][j] += -bSpeed;
+			if (cZ[ball][j] == 0)
+				cRX[ball][j] += bRot;
+			else
+				cRX[ball][j] += bRot2;
+		}
 	}
+}
+// right swing movement
+void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2) {
 	if (bArc[ball] >= d) {
 		//bArc[ball] = d;
 		bDir[ball] = 0;
@@ -255,6 +243,16 @@ void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat b
 		if (swing == 0 && ball != nBall) {
 			swingMode = 0;
 			bDir[nBall] = 0;
+		}
+	}
+	else {
+		bArc[ball] += s;
+		for (int j = 0; j < pair; j++) {
+			cRZ[ball][j] += bSpeed;
+			if (cZ[ball][j] == 0)
+				cRX[ball][j] += bRot;
+			else
+				cRX[ball][j] += bRot2;
 		}
 	}
 }
@@ -281,7 +279,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 		swingMode = 1;
 		bDir[0] = 1;
 	}
-	if (key == '2' && swingMode ==0)
+	if (key == '2' && swingMode == 0)
 	{
 		swing = 1;
 		swingMode = 2;

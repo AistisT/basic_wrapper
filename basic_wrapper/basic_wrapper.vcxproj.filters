@@ -20,9 +20,6 @@
     <ClInclude Include="Ball.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Cylinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,10 +42,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="poslight.frag">
+    <None Include="cradle.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="poslight.vert">
+    <None Include="cradle.vert">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -23,17 +23,17 @@ GLuint emitmode;
 GLfloat  vx, vy, vz;
 
 // frame variables
-const GLfloat fLLenght = 1.5f, sWidth = 0.3f, fSLenght = 0.85f, fHeight = 1.2f, fWidth = 1.f, pDistance = 0.675f, swingS = 0.135;
+const GLfloat fLLenght = 1.5f, sWidth = 0.3f, fSLenght = 0.85f, fHeight = 1.2f, fWidth = 1.f, pDistance = 0.675f;
 // ball varaibles
-bool left = true,right=false;
+bool left = true, right = false;
 const GLuint bNr = 5, pair = 2;
-const GLfloat bSpeed = 0.12f, bXR = 0.016;
+const GLfloat  bXR = 0.016, swingS = 0.12f, bSpeed = 0.108f;
 GLfloat bWithd, bY[bNr], bX[bNr], bArc[bNr];
 GLuint bDir[5], swingMode, swing;
 //string variables
 GLfloat cY[bNr][pair], cX[bNr][pair], cZ[bNr][pair], cRY[bNr][pair], cRX[bNr][pair], cRZ[bNr][pair];
 // light variables
-GLfloat light_x, light_y, light_z;
+GLfloat light_x, light_y = .7f, light_z;
 
 /* Uniforms*/
 GLuint modelID, viewID, projectionID, lightposID, normalmatrixID;
@@ -46,8 +46,9 @@ Square* square;
 Ball ball[bNr];
 Cylinder cylinder[bNr][pair];
 void MoveBalls();
-void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2, bool backNforth);
-void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2, bool backNforth);
+void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2);
+void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2);
+void CheckStopped();
 
 /*
 This function is called before entering the main rendering loop.
@@ -141,7 +142,7 @@ void display()
 		glm::vec3(0, 0, 4), // Camera is at (0,0,4), in World Space
 		glm::vec3(0, 0, 0), // and looks at the origin
 		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
+	);
 
 	// Apply rotations to the view position
 	View = glm::rotate(View, vx, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
@@ -189,52 +190,53 @@ void display()
 	glUseProgram(0);
 
 	MoveBalls();
+	CheckStopped();
+}
+
+void CheckStopped() {
+	if (bDir[1] == 0 && bDir[2] == 0 && bDir[3] == 0 && bDir[4] == 0 && bDir[0] == 0)
+		swingMode = 0;
 }
 
 // Ball movement selector
 void MoveBalls() {
 	for (int i = 1; i <= swingMode; i++) {
-		if (i != 3){
-			if (bDir[i - 1] == 1) {
-				Swing1(i - 1, -swingS, -44.955, 2, i - 1, bXR, -bXR, false);
-			}
-			else if (bDir[i - 1] == 2) {
-				Swing2(i - 1, swingS, 0, 1, bNr - i, -bXR, bXR, false);
-			}
-			else if (bDir[bNr - i] == 1) {
-				Swing2(bNr - i, swingS, 44.955, 2, bNr - i, bXR, -bXR, false);
-			}
-			else if (bDir[bNr - i] == 2) {
-				Swing1(bNr - i, -swingS, 0, 1, i - 1, -bXR, bXR, false);
+		if (swingMode == 1 || swingMode == 2 || swingMode == 3 || (swingMode == 4 && i == 1)) {
+			if ((i != 3 && i != 4)) {
+				if (bDir[i - 1] == 1) {
+					// ball, speed, swing degree, next mode, next ball, string rotation
+					Swing1(i - 1, -swingS, -44.955, 2, i - 1, bXR, -bXR);
+				}
+				else if (bDir[i - 1] == 2) {
+					Swing2(i - 1, swingS, 0, 1, bNr - i, -bXR, bXR);
+				}
+				else if (bDir[bNr - i] == 1) {
+					Swing2(bNr - i, swingS, 44.955, 2, bNr - i, bXR, -bXR);
+				}
+				else if (bDir[bNr - i] == 2) {
+					Swing1(bNr - i, -swingS, 0, 1, i - 1, -bXR, bXR);
+				}
 			}
 		}
-		if (i == 3){
+		if (i == 3 || (swingMode == 4 && (i == 4 || i == 2))) {
 			if (bDir[i - 1] == 1) {
-				Swing1(i - 1, -swingS, -44.955, 2, i - 1, bXR, -bXR, false);
+				Swing1(i - 1, -swingS, -44.955, 2, i - 1, bXR, -bXR);
 			}
 			else if (bDir[i - 1] == 2) {
-				Swing2(i - 1, swingS, 44.955, 1, bNr - i, -bXR, bXR, true);
-			}
-			/*else if (bDir[bNr - i] == 1) {
-				Swing2(bNr - i, swingS, 44.955, 2, bNr - i, bXR, -bXR);
-			}*/
-			else if (bDir[bNr - i] == 2) {
-				Swing1(bNr - i, -swingS, 0, 1, i - 1, -bXR, bXR, true);
+				Swing2(i - 1, swingS, 44.955, 1, i - 1, -bXR, bXR);
 			}
 		}
 	}
-
 }
 
 // left swing movement
-void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2, bool backNforth) {
+void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2) {
 	if (bArc[ball] <= d) {
 		bDir[ball] = 0;
 		bDir[nBall] = t;
-		if (swing == 0 && ball != nBall) {
-			swingMode = 0;
-			bDir[nBall] = 0;
-		}
+	}
+	if (swing == 0 && (bArc[ball] <= .0001 && bArc[ball] >= -.0001)) {
+		bDir[nBall] = 0;
 	}
 	else {
 		bArc[ball] += s;
@@ -246,37 +248,28 @@ void Swing1(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat b
 				cRX[ball][j] += bRot2;
 		}
 	}
+
 }
 // right swing movement
-void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2, bool backNforth) {
+void Swing2(GLuint ball, GLfloat s, GLfloat d, GLuint t, GLuint nBall, GLfloat bRot, GLfloat bRot2) {
 	if (bArc[ball] >= d) {
 		bDir[ball] = 0;
 		bDir[nBall] = t;
-		if (swing == 0 && ball != nBall) {
-			swingMode = 0;
-			bDir[nBall] = 0;
-		}
+	}
+	if (swing == 0 && (bArc[ball] <= .0001 && bArc[ball] >= -.0001)) {
+		bDir[nBall] = 0;
 	}
 	else {
 		bArc[ball] += s;
 		for (int j = 0; j < pair; j++) {
 			cRZ[ball][j] += bSpeed;
-				if (cZ[ball][j] == 0)
-					cRX[ball][j] += bRot;
-				else
-					cRX[ball][j] += bRot2;
-				if (backNforth){
-					if (bArc[ball] >= 0){
-						if (cZ[ball][j] == 0)
-							cRX[ball][j] += -bRot;
-						else
-							cRX[ball][j] += -bRot2;
-					}
-				}
+			if (cZ[ball][j] == 0)
+				cRX[ball][j] += bRot;
+			else
+				cRX[ball][j] += bRot2;
 		}
 	}
 }
-
 
 
 /* Called whenever the window is resized. The new window size is given, in pixels. */
@@ -319,7 +312,7 @@ static void keyCallback(GLFWwindow* window, int key, int s, int action, int mods
 	if (key == '4' && swingMode == 0)
 	{
 		swing = 1;
-		swingMode = 3;
+		swingMode = 4;
 		bDir[0] = 1;
 		bDir[1] = 1;
 		bDir[2] = 1;

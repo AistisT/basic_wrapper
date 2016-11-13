@@ -154,7 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ball.cpp" />
-    <ClCompile Include="Cradle.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="object_ldr.cpp" />
     <ClCompile Include="Square.cpp" />
     <ClCompile Include="Cylinder.cpp" />

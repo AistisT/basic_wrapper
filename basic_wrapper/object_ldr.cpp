@@ -1,6 +1,5 @@
 /* object_ldr.cpp
-Example class to show the start of an .obj mesh obkect file
-loader
+Example class to show the start of an .obj mesh object file loader
 Iain Martin November 2014
 
 This is a wrapper class based around the code taken from :
@@ -17,6 +16,10 @@ Uses std::vector class as the containor for the array of glm::vec3 types
 #include <string>
 
 
+#include <glm/glm.hpp>
+#include "glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/type_ptr.hpp>
+
 /* I don't like using namespaces in header files but have less issues with them in
    seperate cpp files */
 using namespace std;
@@ -27,12 +30,8 @@ using namespace std;
 object_ldr::object_ldr()
 {
 	attribute_v_coord = 0;
+	attribute_v_colours = 1;
 	attribute_v_normal = 2;
-}
-
-
-object_ldr::~object_ldr()
-{
 }
 
 /* Load the object, parsing the file. 
@@ -105,14 +104,33 @@ void object_ldr::createObject()
 
 }
 
+void object_ldr::Init(GLuint modelID, GLuint normalmatrixID) {
+	this->modelID = modelID;
+	this->normalmatrixID = normalmatrixID;
+}
+
 /* Enable vertex attributes and draw object
 Could improve efficiency by moving the vertex attribute pointer functions to the
 create object but this method is more general 
 This code is almost untouched fomr the tutorial code except that I changed the
 number of elements per vertex from 4 to 3*/
-void object_ldr::drawObject()
+void object_ldr::drawObject(glm::mat4& View, GLfloat x, GLfloat y, GLfloat z, GLfloat sx, GLfloat sy, GLfloat sz, GLfloat vx, GLfloat vy, GLfloat vz)
 {
 	int size;	// Used to get the byte size of the element (vertex index) array
+
+	model = glm::mat4(1.0f);
+	// Define the model transformations for the cube
+	model = glm::translate(model, glm::vec3(x, y, z));
+
+	model = glm::rotate(model, vx, glm::vec3(1, 0, 0)); //rotating in clockwise direction around x-axis
+	model = glm::rotate(model, vy, glm::vec3(0, 1, 0)); //rotating in clockwise direction around y-axis
+	model = glm::rotate(model, vz, glm::vec3(0, 0, 1)); //rotating in clockwise direction around z-axis
+	model = glm::scale(model, glm::vec3(sx, sy, sz));//scale equally in all axis
+													 // Define the normal matrix
+	normalmatrix = glm::transpose(glm::inverse(glm::mat3(View * model)));
+
+	glUniformMatrix4fv(modelID, 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix3fv(normalmatrixID, 1, GL_FALSE, &normalmatrix[0][0]);
 
 	// Describe our vertices array to OpenGL (it can't guess its format automatically)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_mesh_vertices);
@@ -138,6 +156,9 @@ void object_ldr::drawObject()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo_mesh_elements); 
 	glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
 	glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
+
+
+//	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 /* This is the smooth normals function given in the tutorial code */
